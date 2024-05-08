@@ -14,7 +14,6 @@ orientation_mode = "xyz"
 # orientation = 180deg, 180deg, 0deg
 mask_file="../../../DESY202311/masks/ref-plane0.txt"
 orientation = 0deg, 0deg, 0deg
-role = "reference"
 
 [ALPIDE_1]
 type = "ALPIDE"
@@ -46,7 +45,7 @@ orientation = 0deg, 0deg, 0deg
 
 [ALPIDE_3]
 type = "ALPIDE"
-position = 0um,0um,150mm
+position = 0um,0um,125mm
 number_of_pixels = 1024,512
 pixel_pitch = 29.24um, 26.88um
 spatial_resolution = 5.00um, 5.00um
@@ -57,10 +56,11 @@ orientation_mode = "xyz"
 # orientation = 180deg, 180deg, 0deg
 mask_file="../../../DESY202311/masks/ref-plane3.txt"
 orientation = 0deg, 0deg, 0deg
+role = "reference"
 
 [ALPIDE_4]
 type = "ALPIDE"
-position = 0um,0um,175mm
+position = 0um,0um,150mm
 number_of_pixels = 1024,512
 pixel_pitch = 29.24um, 26.88um
 spatial_resolution = 5.00um, 5.00um
@@ -74,7 +74,7 @@ orientation = 0deg, 0deg, 0deg
 
 [ALPIDE_5]
 type = "ALPIDE"
-position = 0um,0um,200mm
+position = 0um,0um,175mm
 number_of_pixels = 1024,512
 pixel_pitch = 29.24um, 26.88um
 spatial_resolution = 5.00um, 5.00um
@@ -90,7 +90,7 @@ orientation = 0deg, 0deg, 0deg
 type = "CE65V2"
 orientation_mode = "xyz"
 orientation = 180deg, 180deg, 0deg
-position = 0um,0mm,100mm
+position = 0um,0mm,75mm
 number_of_pixels = 48,24
 pixel_pitch = 18um, 18um
 spatial_resolution = 5.00um, 5.00um
