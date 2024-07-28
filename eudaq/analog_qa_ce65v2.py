@@ -2,7 +2,7 @@
 
 # Noise QA for analogue sensors
 
-# Input: (N_EVENT, NX, NY, N_FRAME)
+# Input: (N_EVENT, nx, nx, N_FRAME)
 
 # Method for noise: RMS, sigma (gaus), FWHM, TAF
 
@@ -20,10 +20,12 @@ parser.add_argument('--mask', help='Mask file types', type=str, default='RTS,hot
 parser.add_argument('--rts', help='Strict mode to identify pixels with RTS effect', default=False, action='store_true')
 parser.add_argument('--frac', help='Fraction inside 3 sigma, used for RTS', type=float, default=0.95)
 parser.add_argument('--debug','-v', help='Debug for fitting by pixels', default=False, action='store_true')
+parser.add_argument('--nx', default=48, type=int, help='Number of pixels in x')
+parser.add_argument('--ny', default=24, type=int, help='Number of pixels in y')
+
 
 args = parser.parse_args()
 
-NX, NY = 48, 24
 SUBMATRIX_EDGE = 48
 SUBMATRIX_NOISE_CUT = 200
 SUBMATRIX_BINWIDTH = 10
@@ -48,11 +50,11 @@ hDiff = ROOT.TH1F('hdiff','Noise relative difference;#Delta_{rel}#sigma = (#sigm
 hFrac = ROOT.TH1F('hfrac','Fraction of counts in 3#sigma region;Fraction_{3#sigma};# pixels', 100, 0.01, 1.01)
 hChiFit = ROOT.TH1F('hchifit','Gaussian fitting quality;#chi^{2} / Ndf;# pixels', 1000, 0., 10.)
 hPedestalMap = ROOT.TH2F('hPedestalpl1','Map of pixel pedestal;pixel X;Pixel Y;#pixels',
-  NX,-0.5,NX-0.5,NY,-0.5,NY-0.5)
+  args.nx,-0.5,args.nx-0.5,args.ny,-0.5,args.ny-0.5)
 hNoiseMap = ROOT.TH2F('hnoisepl1','Map of pixel noise amplitude;pixel X;Pixel Y;#pixels',
-  NX,-0.5,NX-0.5,NY,-0.5,NY-0.5)
+  args.nx,-0.5,args.nx-0.5,args.ny,-0.5,args.ny-0.5)
 hNoiseMapType = ROOT.TH2F('h2noisetype','Map of pixel noise type;pixel X;Pixel Y;#pixels',
-  NX,-0.5,NX-0.5,NY,-0.5,NY-0.5)
+  args.nx,-0.5,args.nx-0.5,args.ny,-0.5,args.ny-0.5)
 
 # root_plot
 root_objs = []
@@ -143,12 +145,12 @@ else:
 # QA for each pixel
 pixel_qa = []
 cmd = ''
-for ipx in range(1,1152+1):
+for ipx in range(1,args.nx*args.ny+1):
   pixel_qa.append({})
   qadb = pixel_qa[-1]
   qadb['id'] = ipx
-  # qadb['pos'] = (int((ipx-200)/NY), (ipx-10)%NY)
-  qadb['pos'] = (int((ipx-1)/NY), (ipx-1)%NY)
+  # qadb['pos'] = (int((ipx-200)/args.ny), (ipx-10)%args.ny)
+  qadb['pos'] = (int((ipx-1)/args.ny), (ipx-1)%args.ny)
   # qadb['pos'] = (int(int(20), int(10)))
   ix, iy= qadb['pos']
   qadb['noise'] = hqa.ProjectionY(f'_py_{ipx}',ipx,ipx)
@@ -292,7 +294,7 @@ with open(f'{args.output}_mask.txt','w') as maskFile:
     maskFile.write(f'p\t{ix}\t{iy}\n')
   print(f'[-] Mask file write to {maskFile.name} ({args.mask})')
 
-cmd = input("Exit after checking plots: <type enter>")
+# cmd = input("Exit after checking plots: <type enter>")
 c.SaveAs(f'{args.output}.pdf')
 
 outputFile = ROOT.TFile(f'{args.output}.root','RECREATE')

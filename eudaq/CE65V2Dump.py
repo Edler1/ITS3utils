@@ -11,7 +11,7 @@ import signal as sys_signal
 #CE65V2Dump.py
 
 # Constants and Options
-NX, NY, N_FRAME     = 48, 24, 9
+N_FRAME             = 9
 FIXED_TRIGGER_FRAME = 2
 FIXED_TRIGGER_WIDTH = 1
 SUBMATRIX_N         = 1
@@ -47,6 +47,10 @@ parser.add_argument('--cut', default='1500',
                     help='Simple threshold for each submatrix')
 parser.add_argument('--skip', default=0,
                     help='Skip total events in raw file')
+parser.add_argument('--nx', default=48,
+                    type=int, help='Number of pixels in x')
+parser.add_argument('--ny', default=24,
+                    type=int, help='Number of pixels in y')
 
 args = parser.parse_args()
 
@@ -121,9 +125,9 @@ def eventCut(evdata):
   # ADCu = val - baseline [1st frame]
   eventPass = False
   sigMax, frMax = 0, 0
-  for ix in range(NX):
+  for ix in range(args.nx):
     # if(ix > SUBMATRIX_EDGE):
-    for iy in range(NY):
+    for iy in range(args.ny):
       frdata = list(evdata[ix][iy])
       pol = SUBMATRIX_POLARITY
       val, ifr = signalAmp(frdata, args.signal, pol)
@@ -138,12 +142,12 @@ if(args.qa):
   qaOut = TFile(args.output + '-qa.root','RECREATE')
   for sigTag in SIGNAL_METHOD:
     h2qa[sigTag] = TH2F(f'h2qa_{sigTag}',f'Noise distribution (method={sigTag});Pixel ID;ADCu;#ev',
-      NX*NY, -0.5, NX*NY-0.5,
+      args.nx*args.ny, -0.5, args.nx*args.ny-0.5,
       4000, -2000, 2000)
 def analogue_qa(evdata):
-  for ix in range(NX):
-    for iy in range(NY):
-      iPx = iy + ix * NY
+  for ix in range(args.nx):
+    for iy in range(args.ny):
+      iPx = iy + ix * args.ny
       for sigTag in SIGNAL_METHOD:
         val, ifr = signalAmp(list(evdata[ix][iy]), sigTag)
         h2qa[sigTag].Fill(iPx, val)
@@ -155,17 +159,17 @@ def decode_event(raw):
     if(nFrame != N_FRAME):
       print(f'[X] WARNING - Number of frames changes from {N_FRAME} to {nFrame}')
       N_FRAME = nFrame
-    evdata = np.empty((NX, NY, N_FRAME),dtype=np.short)
+    evdata = np.empty((args.nx, args.ny, N_FRAME),dtype=np.short)
     for ifr in range(nFrame):
         rawfr = raw.GetBlock(ifr)
-        assert(len(rawfr) == 2*NX*NY)
+        assert(len(rawfr) == 2*args.nx*args.ny)
         # if nFrame > 4:
         #   continue
         #   print(len(rawfr), nFrame)
-        for ix in range(NX):
-            for iy in range(NY):
-                iPx = iy + ix * NY
-                # print(event_number, ix, iy, iPx, NX, NY, len(rawfr), N_FRAME)
+        for ix in range(args.nx):
+            for iy in range(args.ny):
+                iPx = iy + ix * args.ny
+                # print(event_number, ix, iy, iPx, args.nx, args.ny, len(rawfr), N_FRAME)
                 # uint8_t *2 => short
                 try:
                   evdata[ix][iy][ifr] = np.array(int(rawfr[2*iPx+1]<<8) + int(rawfr[2*iPx])).astype(np.short)
