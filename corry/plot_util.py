@@ -606,7 +606,9 @@ class Painter:
     if(htmp.ClassName().startswith('TH') and self.subPadNX * self.subPadNY >= 4):
       htmp.SetTitleSize(0.08, "XY")
       htmp.SetTitleOffset(0.8, "XY")
-    if(optGaus): self.optimise_hist_gaus(htmp, scale)
+    if(optGaus): 
+        tmp_gaus = self.optimise_hist_gaus(htmp, scale)
+        print(tmp_gaus)
     if(kwargs.get('optLangau') == True):
       self.optimise_hist_langau(htmp, scale)
     ROOT.gPad.SetLogx(kwargs.get('optLogX') == True)

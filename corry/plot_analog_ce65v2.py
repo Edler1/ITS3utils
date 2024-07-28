@@ -454,6 +454,11 @@ def DrawAnalysisDUT(self, dirAna, nextPage=True):
   nAssociatedCluster = int(hCut.GetBinContent(8))
   # Efficiency stats.
   eff, error, lerr, uerr = efficiency_simple(nAssociatedCluster, nTrackPass)
+
+  # Printing efficiencies for computing efficiency vs threshold plots
+  print("Efficiencies")
+  print(str(eff*100)+" "+str(uerr*100)+" "+str(lerr*100))
+
   pave = self.draw_text(0.15, 0.1, 0.7, 0.9)
   self.add_text(pave, f'Raw efficiency : {eff * 100:.1f}^{{+{uerr * 100:.1f}}}_{{-{lerr * 100:.1f}}} %', font=62, size=0.08)
   self.add_text(pave, f'All tracks N_{{trk}} : {nTrack:.0f}', font=62, size=0.05)
