@@ -27,7 +27,7 @@ parser.add_argument('--ny', default=24, type=int, help='Number of pixels in y')
 args = parser.parse_args()
 
 SUBMATRIX_EDGE = 48
-SUBMATRIX_NOISE_CUT = 200
+SUBMATRIX_NOISE_CUT = 380
 SUBMATRIX_BINWIDTH = 10
 NOISE_THRESHOLD = 500
 
